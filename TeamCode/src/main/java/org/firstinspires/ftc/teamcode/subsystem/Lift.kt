@@ -11,11 +11,11 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 
 object Lift: Subsystem() {
-    private lateinit var motor: MotorEx
+    lateinit var motor: MotorEx
 
     private val controller = PIDFController(0.008, 0.002, 0.0002, StaticFeedforward(0.0005))
 
-    private const val NAME = "lift"
+    private const val NAME = "slide"
 
     private val toLow: Command
         get() = RunToPosition(motor,
