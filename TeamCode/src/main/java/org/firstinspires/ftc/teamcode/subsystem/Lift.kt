@@ -5,8 +5,10 @@ import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController
 import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition
+import org.firstinspires.ftc.teamcode.keymap.Keymap
 
 object Lift: Subsystem() {
     private lateinit var motor: MotorEx
@@ -37,9 +39,9 @@ object Lift: Subsystem() {
         motor = MotorEx(NAME)
     }
 
-    fun attach(gamepadManager: GamepadManager) {
-        gamepadManager.gamepad2.dpadUp.pressedCommand = { toHigh }
-        gamepadManager.gamepad2.dpadLeft.pressedCommand = { toMiddle }
-        gamepadManager.gamepad2.dpadDown.pressedCommand = { toLow }
+    fun attach(keymap: Keymap) {
+        keymap.highLift.pressedCommand = { toHigh }
+        keymap.middleLift.pressedCommand = { toMiddle }
+        keymap.lowLift.pressedCommand = { toLow }
     }
 }

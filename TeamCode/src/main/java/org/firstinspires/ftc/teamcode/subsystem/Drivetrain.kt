@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Gamepad
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
+import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled
+import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadEx
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 
@@ -37,8 +40,8 @@ object Drivetrain : Subsystem() {
         motors = arrayOf(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor)
     }
 
-    fun attach(gamepadManager: GamepadManager) {
-        driverControlled = MecanumDriverControlled(motors, gamepadManager.gamepad1)
+    fun attach(gamepad: GamepadEx) {
+        driverControlled = MecanumDriverControlled(motors, gamepad)
         driverControlled()
     }
 }
