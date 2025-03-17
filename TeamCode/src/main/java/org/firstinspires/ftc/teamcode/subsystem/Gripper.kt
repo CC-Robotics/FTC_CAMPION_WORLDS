@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystem
 
 import com.qualcomm.robotcore.hardware.Servo
 import com.rowanmcalpin.nextftc.core.Subsystem
+import com.rowanmcalpin.nextftc.core.command.Command
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
+import java.time.Instant
 
 object Gripper : Subsystem() {
     private lateinit var claw: Servo
@@ -39,6 +42,9 @@ object Gripper : Subsystem() {
         currentClawState = if (currentClawState == ClawState.CLOSED) ClawState.OPEN else ClawState.CLOSED
         claw.position = currentClawState.position
     }
+
+    val toggleClawCommand: Command
+        get() = InstantCommand { toggleClaw() }
 
     fun setClawState(state: ClawState) {
         currentClawState = state
