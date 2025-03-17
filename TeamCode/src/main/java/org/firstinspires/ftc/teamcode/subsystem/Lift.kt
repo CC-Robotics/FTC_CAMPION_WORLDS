@@ -4,10 +4,8 @@ import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController
 import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward
-import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition
+import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 
 object Lift: Subsystem() {

@@ -5,10 +5,7 @@ import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.control.coefficients.PIDCoefficients;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
-
-import java.util.Collections;
-import java.util.HashSet;
+import org.firstinspires.ftc.teamcode.command.RunToPosition;
 
 public class Lift extends Subsystem {
     // BOILERPLATE
