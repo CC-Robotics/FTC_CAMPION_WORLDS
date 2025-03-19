@@ -26,19 +26,19 @@ object Lift: Subsystem() {
 
     private const val NAME = "slide"
 
-    private val toLow: Command
+    val toLow: Command
         get() = RunToPosition(motor,
             0.0,
             controlSystem,
             this)
 
-    private val toMiddle: Command
+    val toMiddle: Command
         get() = RunToPosition(motor,
             500.0,
             controlSystem,
             this)
 
-    private val toHigh: Command
+    val toHigh: Command
         get() = RunToPosition(motor,
             1200.0,
             controlSystem,
