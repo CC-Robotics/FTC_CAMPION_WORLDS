@@ -5,10 +5,12 @@ import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.subsystem.Arm
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
+import org.firstinspires.ftc.teamcode.subsystem.Gripper
 import org.firstinspires.ftc.teamcode.subsystem.Lift
+import org.firstinspires.ftc.teamcode.subsystem.SubsystemEx
 
 
-open class TeleOpCore: NextFTCOpMode(Drivetrain, Lift) {
+abstract class TeleOpCore : NextFTCOpMode(Drivetrain, Lift, Gripper, Arm) {
     private lateinit var keymap: Keymap
 
     override fun onInit() {
@@ -16,8 +18,8 @@ open class TeleOpCore: NextFTCOpMode(Drivetrain, Lift) {
     }
 
     override fun onStartButtonPressed() {
-        Drivetrain.attach(gamepadManager.gamepad1)
-        Lift.attach(keymap)
-        Arm.attach(keymap)
+        for (subsystem in subsystems)
+            if (subsystem is SubsystemEx)
+                subsystem.attach(gamepadManager, keymap)
     }
 }

@@ -9,8 +9,9 @@ import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadEx
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
+import org.firstinspires.ftc.teamcode.keymap.Keymap
 
-object Drivetrain : Subsystem() {
+object Drivetrain : SubsystemEx() {
     private val frontLeftName = "fL"
     private val frontRightName = "fR"
     private val backLeftName = "bL"
@@ -40,8 +41,8 @@ object Drivetrain : Subsystem() {
         motors = arrayOf(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor)
     }
 
-    fun attach(gamepad: GamepadEx) {
-        driverControlled = MecanumDriverControlled(motors, gamepad)
+    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+        driverControlled = MecanumDriverControlled(motors, gamepadManager.gamepad1)
         driverControlled()
     }
 }

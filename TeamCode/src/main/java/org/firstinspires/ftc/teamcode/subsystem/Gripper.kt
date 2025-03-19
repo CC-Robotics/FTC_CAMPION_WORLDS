@@ -5,9 +5,11 @@ import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
+import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
+import org.firstinspires.ftc.teamcode.keymap.Keymap
 import java.time.Instant
 
-object Gripper : Subsystem() {
+object Gripper : SubsystemEx() {
     private lateinit var claw: Servo
     private lateinit var wristYaw: Servo
 
@@ -43,10 +45,17 @@ object Gripper : Subsystem() {
         claw.position = currentClawState.position
     }
 
-    val toggleClawCommand: Command
-        get() = InstantCommand { toggleClaw() }
+    val openClaw: Command
+        get() = InstantCommand { setClawState(ClawState.OPEN) }
 
-    fun setClawState(state: ClawState) {
+    val closeClaw: Command
+        get() = InstantCommand { setClawState(ClawState.CLOSED) }
+
+    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+        keymap.toggleClaw.pressedCommand = { InstantCommand { toggleClaw() } }
+    }
+
+    private fun setClawState(state: ClawState) {
         currentClawState = state
         claw.position = state.position
     }

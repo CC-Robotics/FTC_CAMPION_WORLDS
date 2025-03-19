@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
+import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import dev.nextftc.nextcontrol.ControlSystem
@@ -18,7 +19,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Config
-object Arm : Subsystem() {
+object Arm : SubsystemEx() {
     private lateinit var arm: MotorGroup
 
 //    private val controller = PIDFController(0.008, 0.002, 0.0002, GainScheduledArmFeedforward({
@@ -56,7 +57,7 @@ object Arm : Subsystem() {
         arm.leader.resetEncoder()
     }
 
-    fun attach(keymap: Keymap) {
+    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
         keymap.arm.displacedCommand = { xy ->
             position += (xy.second * 5).roundToInt()
             runToPosition

@@ -8,5 +8,7 @@ interface Keymap {
     val middleLift: Button
     val lowLift: Button
 
+    val toggleClaw: Button
+
     val arm: Joystick
 }

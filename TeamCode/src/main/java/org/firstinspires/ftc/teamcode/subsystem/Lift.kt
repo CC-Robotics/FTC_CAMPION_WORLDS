@@ -4,6 +4,7 @@ import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController
 import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward
+import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
@@ -14,7 +15,7 @@ import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 
-object Lift: Subsystem() {
+object Lift: SubsystemEx() {
     private lateinit var motor: MotorEx
 
     private val controlSystem = ControlSystem(
@@ -48,7 +49,7 @@ object Lift: Subsystem() {
         motor = MotorEx(NAME)
     }
 
-    fun attach(keymap: Keymap) {
+    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
         keymap.highLift.pressedCommand = { toHigh }
         keymap.middleLift.pressedCommand = { toMiddle }
         keymap.lowLift.pressedCommand = { toLow }
