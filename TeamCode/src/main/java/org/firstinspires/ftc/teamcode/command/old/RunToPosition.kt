@@ -16,7 +16,7 @@ NextFTC: a user-friendly control library for FIRST Tech Challenge
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.firstinspires.ftc.teamcode.command
+package org.firstinspires.ftc.teamcode.command.old
 
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
@@ -30,15 +30,23 @@ import dev.nextftc.nextcontrol.KineticState
  * finishes, it will set the [Controllable]'s power to 0. To have it hold position, set the default
  * command to a [HoldPosition] command.
  */
-class RunToPosition @JvmOverloads constructor(val target: Double, val controlSystem: ControlSystem,
+class RunToPosition @JvmOverloads constructor(val controllable: Controllable, val target: Double, val controlSystem: ControlSystem,
                                               override val subsystems: Set<Subsystem> = setOf()): Command() {
 
-    constructor(target: Double, controlSystem: ControlSystem, subsystem: Subsystem): this(target, controlSystem, setOf(subsystem))
+    constructor(controllable: Controllable, target: Double, controlSystem: ControlSystem, subsystem: Subsystem): this(controllable, target, controlSystem, setOf(subsystem))
 
     override val isDone: Boolean
         get() = controlSystem.isWithinTolerance(10.0)
 
     override fun start() {
         controlSystem.goal = KineticState(target)
+    }
+
+    override fun update() {
+        controllable.power = controlSystem.calculate(KineticState(controllable.currentPosition, controllable.velocity))
+    }
+
+    override fun stop(interrupted: Boolean) {
+        controllable.power = 0.0
     }
 }

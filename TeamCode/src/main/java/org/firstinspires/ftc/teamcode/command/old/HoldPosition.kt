@@ -16,8 +16,9 @@ NextFTC: a user-friendly control library for FIRST Tech Challenge
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.firstinspires.ftc.teamcode.command
+package org.firstinspires.ftc.teamcode.command.old
 
+import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable
 import dev.nextftc.nextcontrol.ControlSystem
@@ -29,31 +30,18 @@ import dev.nextftc.nextcontrol.KineticState
  * @param controllable the [Controllable] to control
  * @param controlSystem the [ControlSystem] to implement
  */
-class RunToState(private val controllable: Controllable, private val controlSystem: ControlSystem, private val state: KineticState) : Command() {
-    override val isDone: Boolean
-        get() = controlSystem.isWithinTolerance(10.0)
+class HoldPosition @JvmOverloads constructor(val controllable: Controllable, val controlSystem: ControlSystem,
+                                             override val subsystems: Set<Subsystem> = setOf(), val position: Double = controllable.currentPosition): Command() {
 
-    private var oldVelocity = 0.0
-    private var lastUpdateTime = System.nanoTime()
+    constructor(controllable: Controllable, controlSystem: ControlSystem, subsystem: Subsystem, position: Double = controllable.currentPosition): this(controllable, controlSystem, setOf(subsystem), position)
 
-    private fun getAcceleration(): Double {
-        val currentTime = System.nanoTime()
-        val deltaTime = (currentTime - lastUpdateTime) / 1e9
-        lastUpdateTime = currentTime
-
-        return if (deltaTime > 0) (controllable.velocity - oldVelocity) / deltaTime else 0.0
-    }
+    override val isDone = false
 
     override fun start() {
-        controlSystem.goal = state
+        controlSystem.goal = KineticState(position)
     }
 
     override fun update() {
-        controllable.power = controlSystem.calculate(KineticState(controllable.currentPosition, controllable.velocity, getAcceleration()))
-        oldVelocity = controllable.velocity
-    }
-
-    override fun stop(interrupted: Boolean) {
-        controllable.power = 0.0
+        controllable.power = controlSystem.calculate(KineticState(controllable.currentPosition))
     }
 }

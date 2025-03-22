@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.qualcomm.robotcore.hardware.Servo
-import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import org.firstinspires.ftc.teamcode.keymap.Keymap
-import java.time.Instant
+import org.firstinspires.ftc.teamcode.util.DualServo
 
 object Gripper : SubsystemEx() {
     private lateinit var claw: Servo
     private lateinit var wristYaw: Servo
 
-    private lateinit var wristPitchLeft: Servo
-    private lateinit var wristPitchRight: Servo
+    private lateinit var wristPitch: DualServo
 
     private const val CLAW_NAME = "claw"
     private const val WRIST_YAW_NAME = "wrist"
@@ -29,18 +27,15 @@ object Gripper : SubsystemEx() {
         claw = OpModeData.hardwareMap.get(Servo::class.java, CLAW_NAME)
         wristYaw = OpModeData.hardwareMap.get(Servo::class.java, WRIST_YAW_NAME)
 
-        wristPitchLeft = OpModeData.hardwareMap.get(Servo::class.java, WRIST_PITCH_LEFT_NAME)
-        wristPitchRight = OpModeData.hardwareMap.get(Servo::class.java, WRIST_PITCH_RIGHT_NAME)
+        wristPitch = DualServo(WRIST_PITCH_LEFT_NAME, WRIST_PITCH_RIGHT_NAME)
+        wristPitch.pwmEnabled = true
+        wristPitch.follower.direction = Servo.Direction.REVERSE
 
         claw.controller.pwmEnable()
         wristYaw.controller.pwmEnable()
-        wristPitchLeft.controller.pwmEnable()
-        wristPitchRight.controller.pwmEnable()
-
-        wristPitchRight.direction = Servo.Direction.REVERSE
     }
 
-    fun toggleClaw() {
+    private fun toggleClaw() {
         currentClawState = if (currentClawState == ClawState.CLOSED) ClawState.OPEN else ClawState.CLOSED
         claw.position = currentClawState.position
     }

@@ -26,20 +26,19 @@ import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
 
 /**
- * This implements a [ControlSystem] to hold a [Controllable] in its current position.
- *
- * @param controllable the [Controllable] to control
- * @param controlSystem the [ControlSystem] to implement
+ * This implements a [Controller] to drive a [Controllable] to a specified target position. When it
+ * finishes, it will set the [Controllable]'s power to 0. To have it hold position, set the default
+ * command to a [HoldPosition] command.
  */
-class HoldPosition @JvmOverloads constructor(val controllable: Controllable, val controlSystem: ControlSystem,
-                                             override val subsystems: Set<Subsystem> = setOf(), val position: Double = controllable.currentPosition): Command() {
+class HoldPosition @JvmOverloads constructor(val controllable: Controllable, val target: () -> Double, val controlSystem: ControlSystem,
+                                             override val subsystems: Set<Subsystem> = setOf()): Command() {
 
-    constructor(controllable: Controllable, controlSystem: ControlSystem, subsystem: Subsystem, position: Double = controllable.currentPosition): this(controllable, controlSystem, setOf(subsystem), position)
+    constructor(controllable: Controllable, target: () -> Double, controlSystem: ControlSystem, subsystem: Subsystem): this(controllable, target, controlSystem, setOf(subsystem))
 
     override val isDone = false
 
     override fun start() {
-        controlSystem.goal = KineticState(position)
+        controlSystem.goal = KineticState(target())
     }
 
     override fun update() {

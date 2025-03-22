@@ -8,15 +8,15 @@ object FConstants {
     init {
         FollowerConstants.localizers = Localizers.DRIVE_ENCODERS
 
-        FollowerConstants.leftFrontMotorName = "leftFront"
-        FollowerConstants.leftRearMotorName = "leftRear"
-        FollowerConstants.rightFrontMotorName = "rightFront"
-        FollowerConstants.rightRearMotorName = "rightRear"
+        FollowerConstants.leftFrontMotorName = "fL"
+        FollowerConstants.leftRearMotorName = "bL"
+        FollowerConstants.rightFrontMotorName = "fR"
+        FollowerConstants.rightRearMotorName = "bR"
 
-        FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE
-        FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.REVERSE
-        FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD
-        FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD
+        FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.FORWARD
+        FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.FORWARD
+        FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.REVERSE
+        FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.REVERSE
 
         FollowerConstants.mass = 13.0
 

@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.acmerobotics.dashboard.config.Config
-import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
-import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.command.RunToPosition
@@ -31,8 +29,14 @@ object Arm : SubsystemEx() {
 //        (Math.PI / 2) - thetaRadians           // Adjust to arm feedforward logic
 //    }))
 
-    @JvmField var feedforwardMultiplier = 0.0005
-    @JvmField var position = 0
+    @JvmField
+    var feedforwardMultiplier = 0.0005
+
+    @JvmField
+    var position = 0
+
+    @JvmField
+    var useControl = true
 
     private val controlSystem = ControlSystem(
         PIDElement(PIDType.POSITION, 0.008, 0.002, 0.0002),
@@ -46,10 +50,13 @@ object Arm : SubsystemEx() {
     )
 
     private val runToPosition: RunToPosition
-        get() = RunToPosition(arm, position.toDouble(), controlSystem, this)
+        get() = RunToPosition(position.toDouble(), controlSystem, this)
 
-    override val defaultCommand: Command
-        get() = HoldPosition(arm, controlSystem, this)
+    override fun periodic() {
+        if (useControl) {
+            arm.power = controlSystem.calculate(KineticState(arm.currentPosition, arm.velocity))
+        }
+    }
 
     override fun initialize() {
         arm = MotorGroup("right", "left")
