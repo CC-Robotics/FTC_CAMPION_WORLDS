@@ -11,6 +11,11 @@ import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 
+/**
+ * The system controlling the drivetrain of the bot (the system facilitating
+ * power delivery to the wheels.) It uses holonomic drive with mecanum
+ * wheels allowing for the bot to move omnidirectionally without turning.
+ * */
 object Drivetrain : SubsystemEx() {
     private val frontLeftName = "fL"
     private val frontRightName = "fR"
@@ -32,9 +37,9 @@ object Drivetrain : SubsystemEx() {
         backRightMotor = MotorEx(backRightName)
         frontRightMotor = MotorEx(frontRightName)
 
-        // Change the motor directions to suit your robot.
         frontLeftMotor.direction = DcMotorSimple.Direction.FORWARD
         backLeftMotor.direction = DcMotorSimple.Direction.FORWARD
+        // One side of wheels must have reversed motors
         frontRightMotor.direction = DcMotorSimple.Direction.REVERSE
         backRightMotor.direction = DcMotorSimple.Direction.REVERSE
 
@@ -42,6 +47,7 @@ object Drivetrain : SubsystemEx() {
     }
 
     override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+        // Use method which attaches mecanum drive control to the gamepad
         driverControlled = MecanumDriverControlled(motors, gamepadManager.gamepad1)
         driverControlled()
     }

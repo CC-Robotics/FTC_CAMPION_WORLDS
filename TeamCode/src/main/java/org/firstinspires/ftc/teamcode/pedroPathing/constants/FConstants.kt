@@ -4,6 +4,12 @@ import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.localization.Localizers
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 
+/*
+* This is tuning information for PedroPathing, allowing for
+* accurate autonomic movement. These most likely do not need
+* to be changed unless issues are found with motion.
+* */
+
 object FConstants {
     init {
         FollowerConstants.localizers = Localizers.DRIVE_ENCODERS

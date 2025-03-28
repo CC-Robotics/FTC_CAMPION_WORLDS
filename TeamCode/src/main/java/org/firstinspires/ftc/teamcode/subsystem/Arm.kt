@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.acmerobotics.dashboard.config.Config
-import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.command.RunToPosition
@@ -11,12 +10,16 @@ import dev.nextftc.nextcontrol.feedback.PIDElement
 import dev.nextftc.nextcontrol.feedback.PIDType
 import dev.nextftc.nextcontrol.filters.FilterElement
 import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
-import org.firstinspires.ftc.teamcode.command.HoldPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Config
+/**
+ * The Arm system is what controls the pivot of the robot in which the
+ * lift (linear slide) system is attached to. It uses a PIDF controller
+ * with gain scheduled feedforward to ensure motions are smooth and accurate.
+ * */
 object Arm : SubsystemEx() {
     private lateinit var arm: MotorGroup
 
@@ -29,15 +32,28 @@ object Arm : SubsystemEx() {
 //        (Math.PI / 2) - thetaRadians           // Adjust to arm feedforward logic
 //    }))
 
+    /**
+     * Dashboard editable default feedforward multiplier.
+     * It is multiplied by the sin of the arm angle as well as the lift extension
+     * percentage to calculate the correct feedforward term.
+     * */
     @JvmField
     var feedforwardMultiplier = 0.0005
 
     @JvmField
-    var position = 0
+    var targetPosition = 0
 
+    /**
+     * Boolean indicating if the control system should update the controllable
+     * in the periodic function of the subsystem in each loop.
+     * */
     @JvmField
     var useControl = true
 
+    /**
+     * The control system of the arm (pivot) which uses a PID controller in combination
+     * with gain-scheduled feedforward to ensure movement is accurate.
+     * */
     private val controlSystem = ControlSystem(
         PIDElement(PIDType.POSITION, 0.008, 0.002, 0.0002),
         { input ->
@@ -50,7 +66,7 @@ object Arm : SubsystemEx() {
     )
 
     private val runToPosition: RunToPosition
-        get() = RunToPosition(position.toDouble(), controlSystem, this)
+        get() = RunToPosition(targetPosition.toDouble(), controlSystem, this)
 
     override fun periodic() {
         if (useControl) {
@@ -60,13 +76,18 @@ object Arm : SubsystemEx() {
 
     override fun initialize() {
         arm = MotorGroup("right", "left")
-        arm.leader.reverse()
-        arm.leader.resetEncoder()
+        arm.leader.reverse() // So they go in the right direction
+        arm.leader.resetEncoder() // Good practice
     }
 
     override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+        /*
+        * On gamepad joystick movement (displacement), update the
+        * target position of the arm by how much the joystick was
+        * moved upwards then run to that position
+        * */
         keymap.arm.displacedCommand = { xy ->
-            position += (xy.second * 5).roundToInt()
+            targetPosition += (xy.second * 5).roundToInt()
             runToPosition
         }
     }

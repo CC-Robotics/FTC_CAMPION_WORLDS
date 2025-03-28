@@ -3,6 +3,9 @@ package pedroPathing.constants
 import com.pedropathing.localization.Encoder
 import com.pedropathing.localization.constants.DriveEncoderConstants
 
+// These are also PedroPathing constants.
+// Refer to commend in FConstants.kt for more information.
+
 object LConstants {
     init {
         DriveEncoderConstants.forwardTicksToInches = 1.0;

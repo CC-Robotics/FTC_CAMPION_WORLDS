@@ -12,11 +12,25 @@ import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 
-object Lift: SubsystemEx() {
+/**
+ * Controls the lift (linear slide) system of the robot which is mounted on the arm (pivot.)
+ * It uses a PIDF controller to ensure smooth and accurate motion. Only static feedforward is
+ * necessary here.
+ */
+object Lift : SubsystemEx() {
     private lateinit var motor: MotorEx
 
-    @JvmField var useControl = false
+    /**
+     * Boolean indicating if the control system should update the controllable
+     * in the periodic function of the subsystem in each loop.
+     * */
+    @JvmField
+    var useControl = false
 
+    /**
+     * PID Control system with a static feedforward term for that extra "push" to get it
+     * moving quickly.
+     */
     private val controlSystem = ControlSystem(
         PIDElement(PIDType.POSITION, 0.008, 0.002, 0.0002),
         { 0.0005 },
@@ -26,23 +40,28 @@ object Lift: SubsystemEx() {
 
     private const val NAME = "slide"
 
+    // Movement commands, which are also gamepad binded
+
     val toLow: Command
         get() = RunToPosition(
             0.0,
             controlSystem,
-            this)
+            this
+        )
 
     val toMiddle: Command
         get() = RunToPosition(
             500.0,
             controlSystem,
-            this)
+            this
+        )
 
     val toHigh: Command
         get() = RunToPosition(
             1200.0,
             controlSystem,
-            this)
+            this
+        )
 
     override fun initialize() {
         motor = MotorEx(NAME)
@@ -50,7 +69,8 @@ object Lift: SubsystemEx() {
 
     override fun periodic() {
         if (useControl) {
-            motor.power = controlSystem.calculate(KineticState(motor.currentPosition, motor.velocity))
+            motor.power =
+                controlSystem.calculate(KineticState(motor.currentPosition, motor.velocity))
         }
     }
 

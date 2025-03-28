@@ -5,14 +5,20 @@ import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
+import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
+import org.firstinspires.ftc.teamcode.keymap.Keymap
+import org.firstinspires.ftc.teamcode.util.DualServo
 import java.time.Instant
 
-object Gripper : Subsystem() {
+/**
+ * The system controls the gripper of the bot which includes the claw servo, wrist yaw (left right) servos
+ * and wrist pitch (up down) servos
+ */
+object Gripper : SubsystemEx() {
     private lateinit var claw: Servo
     private lateinit var wristYaw: Servo
 
-    private lateinit var wristPitchLeft: Servo
-    private lateinit var wristPitchRight: Servo
+    private lateinit var wristPitch: DualServo
 
     private const val CLAW_NAME = "claw"
     private const val WRIST_YAW_NAME = "wrist"
@@ -27,28 +33,37 @@ object Gripper : Subsystem() {
         claw = OpModeData.hardwareMap.get(Servo::class.java, CLAW_NAME)
         wristYaw = OpModeData.hardwareMap.get(Servo::class.java, WRIST_YAW_NAME)
 
-        wristPitchLeft = OpModeData.hardwareMap.get(Servo::class.java, WRIST_PITCH_LEFT_NAME)
-        wristPitchRight = OpModeData.hardwareMap.get(Servo::class.java, WRIST_PITCH_RIGHT_NAME)
+        // Use a DualServo because we use 2 servos for the wrist
+        wristPitch = DualServo(WRIST_PITCH_LEFT_NAME, WRIST_PITCH_RIGHT_NAME)
 
+        // Not sure what this does but precaution
         claw.controller.pwmEnable()
         wristYaw.controller.pwmEnable()
-        wristPitchLeft.controller.pwmEnable()
-        wristPitchRight.controller.pwmEnable()
+        wristPitch.pwmEnabled = true
 
-        wristPitchRight.direction = Servo.Direction.REVERSE
+        wristPitch.follower.direction = Servo.Direction.REVERSE
     }
 
-    fun toggleClaw() {
-        currentClawState = if (currentClawState == ClawState.CLOSED) ClawState.OPEN else ClawState.CLOSED
-        claw.position = currentClawState.position
+    private fun toggleClaw() {
+        setClawState(if (currentClawState == ClawState.CLOSED) ClawState.OPEN else ClawState.CLOSED)
     }
 
-    val toggleClawCommand: Command
+    private val toggleClawCommand: Command
         get() = InstantCommand { toggleClaw() }
+
+    val openClaw: Command
+        get() = InstantCommand { setClawState(ClawState.OPEN) }
+
+    val closeClaw: Command
+        get() = InstantCommand { setClawState(ClawState.CLOSED) }
 
     fun setClawState(state: ClawState) {
         currentClawState = state
         claw.position = state.position
+    }
+
+    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+        keymap.toggleClaw.pressedCommand = { toggleClawCommand }
     }
 
     enum class ClawState(val position: Double) {
