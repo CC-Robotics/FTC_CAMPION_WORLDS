@@ -19,13 +19,6 @@ dependencies {
 
     implementation 'com.rowanmcalpin.nextftc:core:0.6.1'
     implementation 'com.rowanmcalpin.nextftc:ftc:0.6.1'
-    implementation('com.rowanmcalpin.nextftc:pedro:0.6.1') {
-        exclude group: "com.acmerobotics.dashboard"
-    }
-
-    implementation('com.pedropathing:pedro:1.0.8') {
-        exclude group: "com.acmerobotics.dashboard"
-    }
 
     implementation 'dev.nextftc:nextcontrol:0.0.0-alpha1'
 }
