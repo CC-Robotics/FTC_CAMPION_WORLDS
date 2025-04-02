@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.keymap
 
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 
-class DefaultKeymap(gamepadManager: GamepadManager) : Keymap {
-    override val highLift = gamepadManager.gamepad2.dpadUp
-    override val middleLift = gamepadManager.gamepad2.dpadLeft
-    override val lowLift = gamepadManager.gamepad2.dpadDown
+open class DefaultKeymap : Keymap {
+    override val highLift = GamepadManager.gamepad2.dpadUp
+    override val middleLift = GamepadManager.gamepad2.dpadLeft
+    override val lowLift = GamepadManager.gamepad2.dpadDown
 
-    override val toggleClaw = gamepadManager.gamepad2.x
+    override val toggleClaw = GamepadManager.gamepad2.x
 
-    override val arm = gamepadManager.gamepad2.leftStick
+    override val arm = GamepadManager.gamepad2.leftStick
 }

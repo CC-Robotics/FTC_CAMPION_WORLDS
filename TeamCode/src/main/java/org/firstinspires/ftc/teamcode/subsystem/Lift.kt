@@ -5,6 +5,7 @@ import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
+import dev.nextftc.nextcontrol.feedback.PIDCoefficients
 import dev.nextftc.nextcontrol.feedback.PIDElement
 import dev.nextftc.nextcontrol.feedback.PIDType
 import dev.nextftc.nextcontrol.filters.FilterElement
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.keymap.Keymap
  * necessary here.
  */
 object Lift : SubsystemEx() {
-    private lateinit var motor: MotorEx
+    lateinit var motor: MotorEx
 
     /**
      * Boolean indicating if the control system should update the controllable
@@ -27,20 +28,26 @@ object Lift : SubsystemEx() {
     @JvmField
     var useControl = false
 
+    @JvmField
+    var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+
+    @JvmField
+    var kF = 0.0
+
     /**
      * PID Control system with a static feedforward term for that extra "push" to get it
      * moving quickly.
      */
-    private val controlSystem = ControlSystem(
-        PIDElement(PIDType.POSITION, 0.008, 0.002, 0.0002),
-        { 0.0005 },
+    val controlSystem = ControlSystem(
+        PIDElement(PIDType.POSITION, coefficients),
+        { kF },
         FilterElement(),
         ConstantInterpolator(KineticState())
     )
 
     private const val NAME = "slide"
 
-    // Movement commands, which are also gamepad binded
+    // Movement commands, which are also bound to the gamepad
 
     val toLow: Command
         get() = RunToPosition(
@@ -74,7 +81,7 @@ object Lift : SubsystemEx() {
         }
     }
 
-    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+    override fun attach(keymap: Keymap) {
         keymap.highLift.pressedCommand = { toHigh }
         keymap.middleLift.pressedCommand = { toMiddle }
         keymap.lowLift.pressedCommand = { toLow }

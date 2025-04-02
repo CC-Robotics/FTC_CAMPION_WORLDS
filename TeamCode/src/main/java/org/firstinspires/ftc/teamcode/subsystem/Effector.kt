@@ -1,24 +1,22 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.qualcomm.robotcore.hardware.Servo
-import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.util.DualServo
-import java.time.Instant
 
 /**
  * The system controls the gripper of the bot which includes the claw servo, wrist yaw (left right) servos
  * and wrist pitch (up down) servos
  */
-object Gripper : SubsystemEx() {
-    private lateinit var claw: Servo
-    private lateinit var wristYaw: Servo
+object Effector : SubsystemEx() {
+    lateinit var claw: Servo
+    lateinit var wristYaw: Servo
 
-    private lateinit var wristPitch: DualServo
+    lateinit var wristPitch: DualServo
 
     private const val CLAW_NAME = "claw"
     private const val WRIST_YAW_NAME = "wrist"
@@ -30,8 +28,8 @@ object Gripper : SubsystemEx() {
 
 
     override fun initialize() {
-        claw = OpModeData.hardwareMap.get(Servo::class.java, CLAW_NAME)
-        wristYaw = OpModeData.hardwareMap.get(Servo::class.java, WRIST_YAW_NAME)
+        claw = OpModeData.hardwareMap!!.get(Servo::class.java, CLAW_NAME)
+        wristYaw = OpModeData.hardwareMap!!.get(Servo::class.java, WRIST_YAW_NAME)
 
         // Use a DualServo because we use 2 servos for the wrist
         wristPitch = DualServo(WRIST_PITCH_LEFT_NAME, WRIST_PITCH_RIGHT_NAME)
@@ -57,12 +55,12 @@ object Gripper : SubsystemEx() {
     val closeClaw: Command
         get() = InstantCommand { setClawState(ClawState.CLOSED) }
 
-    fun setClawState(state: ClawState) {
+    private fun setClawState(state: ClawState) {
         currentClawState = state
         claw.position = state.position
     }
 
-    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
+    override fun attach(keymap: Keymap) {
         keymap.toggleClaw.pressedCommand = { toggleClawCommand }
     }
 
