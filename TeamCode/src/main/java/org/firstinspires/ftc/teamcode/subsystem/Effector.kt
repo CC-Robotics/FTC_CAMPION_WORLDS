@@ -19,41 +19,53 @@ object Effector : SubsystemEx() {
     lateinit var wristPitch: DualServo
 
     private const val CLAW_NAME = "claw"
-    private const val WRIST_YAW_NAME = "wrist"
-
-    private const val WRIST_PITCH_LEFT_NAME = "axle1"
-    private const val WRIST_PITCH_RIGHT_NAME = "axle2"
 
     private var currentClawState = ClawState.CLOSED
 
+    object Wrist {
+        private const val WRIST_YAW_NAME = "wrist"
+
+        private const val WRIST_PITCH_LEFT_NAME = "axle1"
+        private const val WRIST_PITCH_RIGHT_NAME = "axle2"
+
+        fun initialize() {
+            wristYaw = OpModeData.hardwareMap!!.get(Servo::class.java, WRIST_YAW_NAME)
+
+            // Use a DualServo because we use 2 servos for the wrist
+            wristPitch = DualServo(WRIST_PITCH_LEFT_NAME, WRIST_PITCH_RIGHT_NAME)
+
+            // Not sure what this does but precaution
+            wristYaw.controller.pwmEnable()
+            wristPitch.pwmEnabled = true
+
+            wristPitch.follower.direction = Servo.Direction.REVERSE
+        }
+    }
+
+    object Claw {
+        fun initialize() {
+            claw = OpModeData.hardwareMap!!.get(Servo::class.java, CLAW_NAME)
+            claw.controller.pwmEnable()
+        }
+
+        fun toggle() {
+            setClawState(if (currentClawState == ClawState.CLOSED) ClawState.OPEN else ClawState.CLOSED)
+        }
+
+        val open: Command
+            get() = InstantCommand { setClawState(ClawState.OPEN) }
+
+        val close: Command
+            get() = InstantCommand { setClawState(ClawState.CLOSED) }
+    }
+
 
     override fun initialize() {
-        claw = OpModeData.hardwareMap!!.get(Servo::class.java, CLAW_NAME)
-        wristYaw = OpModeData.hardwareMap!!.get(Servo::class.java, WRIST_YAW_NAME)
-
-        // Use a DualServo because we use 2 servos for the wrist
-        wristPitch = DualServo(WRIST_PITCH_LEFT_NAME, WRIST_PITCH_RIGHT_NAME)
-
-        // Not sure what this does but precaution
-        claw.controller.pwmEnable()
-        wristYaw.controller.pwmEnable()
-        wristPitch.pwmEnabled = true
-
-        wristPitch.follower.direction = Servo.Direction.REVERSE
+        Wrist.initialize()
+        Claw.initialize()
     }
 
-    private fun toggleClaw() {
-        setClawState(if (currentClawState == ClawState.CLOSED) ClawState.OPEN else ClawState.CLOSED)
-    }
 
-    private val toggleClawCommand: Command
-        get() = InstantCommand { toggleClaw() }
-
-    val openClaw: Command
-        get() = InstantCommand { setClawState(ClawState.OPEN) }
-
-    val closeClaw: Command
-        get() = InstantCommand { setClawState(ClawState.CLOSED) }
 
     private fun setClawState(state: ClawState) {
         currentClawState = state
@@ -61,7 +73,7 @@ object Effector : SubsystemEx() {
     }
 
     override fun attach(keymap: Keymap) {
-        keymap.toggleClaw.pressedCommand = { toggleClawCommand }
+        keymap.toggleClaw.pressedCommand = { InstantCommand { Claw.toggle() } }
     }
 
     enum class ClawState(val position: Double) {

@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystem
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.clamp
+import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
+import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
+import com.rowanmcalpin.nextftc.core.units.TimeSpan
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.command.RunToPosition
@@ -78,6 +82,20 @@ object Arm : SubsystemEx() {
 
     private val runToPosition: RunToPosition
         get() = RunToPosition(targetPosition, controlSystem, this)
+
+    private val resetEncoder: SequentialGroup
+        get() = SequentialGroup(
+            RunToPosition(0.0, controlSystem, this),
+            InstantCommand {
+                targetPosition = 0.0
+                useControl = false
+            },
+            Delay(TimeSpan.Companion.fromMs(450)),
+            InstantCommand {
+                armMotors.leader.resetEncoder()
+                useControl = true
+            }
+        )
 
     override fun periodic() {
         if (useControl) {
