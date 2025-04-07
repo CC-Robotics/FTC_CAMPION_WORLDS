@@ -1,25 +1,36 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop
 
 import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
+import com.rowanmcalpin.nextftc.ftc.components.Components
 import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
 import org.firstinspires.ftc.teamcode.keymap.Keymap
-import org.firstinspires.ftc.teamcode.subsystem.Arm
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
-import org.firstinspires.ftc.teamcode.subsystem.Gripper
-import org.firstinspires.ftc.teamcode.subsystem.Lift
-import org.firstinspires.ftc.teamcode.subsystem.SubsystemEx
+import org.firstinspires.ftc.teamcode.subsystem.Effector
+import org.firstinspires.ftc.teamcode.subsystem.Lifts
+import org.firstinspires.ftc.teamcode.subsystem.Pinion
 
+/**
+ * The main TeleOp class for the robot. OpMode templating allows for easy splitting of the main
+ * TeleOp logic based on the alliance colour.
+ */
+abstract class TeleOpCore : NextFTCOpMode() {
+    private val subsystems = arrayOf(Drivetrain, Lifts, Effector, Pinion)
 
-abstract class TeleOpCore : NextFTCOpMode(Drivetrain, Lift, Gripper, Arm) {
+    override val components = Components()
+        .useSubsystems(*subsystems)
+        .useGamepads()
+        // Bulk reading yields large performance gains caching all data from control hub.
+        .useBulkReading()
     private lateinit var keymap: Keymap
 
     override fun onInit() {
-        keymap = DefaultKeymap(gamepadManager)
+        // Uses the default keymap (basically named keybinds)
+        keymap = DefaultKeymap()
     }
 
     override fun onStartButtonPressed() {
+        // Attach the keymap to all subsystems. (Binds them to the gamepad)
         for (subsystem in subsystems)
-            if (subsystem is SubsystemEx)
-                subsystem.attach(gamepadManager, keymap)
+            subsystem.attach(keymap)
     }
 }

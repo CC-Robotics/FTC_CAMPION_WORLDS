@@ -11,8 +11,8 @@ import com.rowanmcalpin.nextftc.ftc.OpModeData
  * */
 class DualServo(val leader: Servo, val follower: Servo) {
     constructor(leaderName: String, followerName: String): this (
-        OpModeData.hardwareMap.get(Servo::class.java, leaderName),
-        OpModeData.hardwareMap.get(Servo::class.java, followerName)
+        OpModeData.hardwareMap!!.get(Servo::class.java, leaderName),
+        OpModeData.hardwareMap!!.get(Servo::class.java, followerName)
     )
 
     /**

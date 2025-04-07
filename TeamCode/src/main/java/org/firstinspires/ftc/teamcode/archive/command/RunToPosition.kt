@@ -16,41 +16,33 @@ NextFTC: a user-friendly control library for FIRST Tech Challenge
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.firstinspires.ftc.teamcode.command.old
+package org.firstinspires.ftc.teamcode.archive.command
 
+import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
 
 /**
- * This implements a [ControlSystem] to hold a [Controllable] in its current position.
- *
- * @param controllable the [Controllable] to control
- * @param controlSystem the [ControlSystem] to implement
+ * This implements a [Controller] to drive a [Controllable] to a specified target position. When it
+ * finishes, it will set the [Controllable]'s power to 0. To have it hold position, set the default
+ * command to a [HoldPosition] command.
  */
-class RunToState(private val controllable: Controllable, private val controlSystem: ControlSystem, private val state: KineticState) : Command() {
+class RunToPosition @JvmOverloads constructor(val controllable: Controllable, val target: Double, val controlSystem: ControlSystem,
+                                              override val subsystems: Set<Subsystem> = setOf()): Command() {
+
+    constructor(controllable: Controllable, target: Double, controlSystem: ControlSystem, subsystem: Subsystem): this(controllable, target, controlSystem, setOf(subsystem))
+
     override val isDone: Boolean
         get() = controlSystem.isWithinTolerance(10.0)
 
-    private var oldVelocity = 0.0
-    private var lastUpdateTime = System.nanoTime()
-
-    private fun getAcceleration(): Double {
-        val currentTime = System.nanoTime()
-        val deltaTime = (currentTime - lastUpdateTime) / 1e9
-        lastUpdateTime = currentTime
-
-        return if (deltaTime > 0) (controllable.velocity - oldVelocity) / deltaTime else 0.0
-    }
-
     override fun start() {
-        controlSystem.goal = state
+        controlSystem.goal = KineticState(target)
     }
 
     override fun update() {
-        controllable.power = controlSystem.calculate(KineticState(controllable.currentPosition, controllable.velocity, getAcceleration()))
-        oldVelocity = controllable.velocity
+        controllable.power = controlSystem.calculate(KineticState(controllable.currentPosition, controllable.velocity))
     }
 
     override fun stop(interrupted: Boolean) {

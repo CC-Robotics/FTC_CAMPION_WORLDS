@@ -9,6 +9,14 @@ interface Keymap {
     val lowLift: Button
 
     val toggleClaw: Button
+    val retractPinion: Button
+
+    val upWristYaw: Button
+    val downWristYaw: Button
+
+    val upWristPitch: Button
+    val downWristPitch: Button
 
     val arm: Joystick
+    val pinion: Joystick
 }

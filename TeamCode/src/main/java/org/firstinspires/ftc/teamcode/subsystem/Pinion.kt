@@ -5,6 +5,7 @@ import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
+import dev.nextftc.nextcontrol.feedback.PIDCoefficients
 import dev.nextftc.nextcontrol.feedback.PIDElement
 import dev.nextftc.nextcontrol.feedback.PIDType
 import dev.nextftc.nextcontrol.filters.FilterElement
@@ -13,12 +14,12 @@ import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 
 /**
- * Controls the lift (linear slide) system of the robot which is mounted on the arm (pivot.)
- * It uses a PIDF controller to ensure smooth and accurate motion. Only static feedforward is
- * necessary here.
+ * Controls the pinion component of the rack and pinion system of the robot which is mounted on the
+ * vertical lift. It uses a PIDF controller to ensure smooth and accurate motion. Theoretically,
+ * feedforward is not necessary at all, however potential use lies in overcoming friction.
  */
-object Lift : SubsystemEx() {
-    private lateinit var motor: MotorEx
+object Pinion : SubsystemEx() {
+    lateinit var motor: MotorEx
 
     /**
      * Boolean indicating if the control system should update the controllable
@@ -27,41 +28,30 @@ object Lift : SubsystemEx() {
     @JvmField
     var useControl = false
 
+    @JvmField
+    var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+
     /**
      * PID Control system with a static feedforward term for that extra "push" to get it
      * moving quickly.
      */
-    private val controlSystem = ControlSystem(
-        PIDElement(PIDType.POSITION, 0.008, 0.002, 0.0002),
-        { 0.0005 },
+    val controlSystem = ControlSystem(
+        PIDElement(PIDType.POSITION, coefficients),
+        { 0.0 },
         FilterElement(),
         ConstantInterpolator(KineticState())
     )
 
-    private const val NAME = "slide"
+    private const val NAME = "pinion"
 
-    // Movement commands, which are also gamepad binded
+    // Movement commands, which are also bound to the gamepad
 
-    val toLow: Command
-        get() = RunToPosition(
-            0.0,
-            controlSystem,
-            this
-        )
-
-    val toMiddle: Command
-        get() = RunToPosition(
-            500.0,
-            controlSystem,
-            this
-        )
-
-    val toHigh: Command
-        get() = RunToPosition(
-            1200.0,
-            controlSystem,
-            this
-        )
+//    val toHigh: Command
+//        get() = RunToPosition(
+//            1200.0,
+//            controlSystem,
+//            this
+//        )
 
     override fun initialize() {
         motor = MotorEx(NAME)
@@ -74,9 +64,7 @@ object Lift : SubsystemEx() {
         }
     }
 
-    override fun attach(gamepadManager: GamepadManager, keymap: Keymap) {
-        keymap.highLift.pressedCommand = { toHigh }
-        keymap.middleLift.pressedCommand = { toMiddle }
-        keymap.lowLift.pressedCommand = { toLow }
+    override fun attach(keymap: Keymap) {
+//        keymap.highLift.pressedCommand = { toHigh }
     }
 }
