@@ -16,7 +16,7 @@ NextFTC: a user-friendly control library for FIRST Tech Challenge
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.firstinspires.ftc.teamcode.command.old
+package org.firstinspires.ftc.teamcode.archive.command
 
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable

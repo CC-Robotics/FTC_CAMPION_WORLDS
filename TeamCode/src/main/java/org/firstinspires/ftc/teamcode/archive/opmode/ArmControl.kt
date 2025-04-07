@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmode.teleop
+package org.firstinspires.ftc.teamcode.archive.opmode
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import com.rowanmcalpin.nextftc.ftc.components.Components
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
+import org.firstinspires.ftc.teamcode.archive.subsystem.Arm
 import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
-import org.firstinspires.ftc.teamcode.subsystem.Arm
 
 @TeleOp(name = "ArmControl", group = "Test Modes")
 class ArmControl : NextFTCOpMode() {

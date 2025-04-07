@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystem
+package org.firstinspires.ftc.teamcode.archive.subsystem
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.clamp
@@ -6,7 +6,6 @@ import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
 import com.rowanmcalpin.nextftc.core.units.TimeSpan
-import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import dev.nextftc.nextcontrol.ControlSystem
@@ -17,7 +16,8 @@ import dev.nextftc.nextcontrol.feedback.PIDType
 import dev.nextftc.nextcontrol.filters.FilterElement
 import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
 import org.firstinspires.ftc.teamcode.keymap.Keymap
-import org.firstinspires.ftc.teamcode.util.Utils
+import org.firstinspires.ftc.teamcode.subsystem.SubsystemEx
+import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 @Config
 /**
@@ -106,7 +106,7 @@ object Arm : SubsystemEx() {
     override fun initialize() {
         targetPosition = 0.0
 
-        armMotors = Utils.motorGroupFromNames("right", "left")
+        armMotors = RobotUtil.motorGroupFromNames("right", "left")
         armMotors.leader.reverse() // So they go in the right direction
         armMotors.leader.resetEncoder() // Good practice
     }

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import com.rowanmcalpin.nextftc.ftc.components.Components
 import org.firstinspires.ftc.teamcode.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystem.Arm
+import org.firstinspires.ftc.teamcode.archive.subsystem.Arm
 
 @Autonomous(name = "Mark Auto")
 class MarkAuto : NextFTCOpMode() {

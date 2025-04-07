@@ -4,7 +4,6 @@ import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import com.rowanmcalpin.nextftc.ftc.components.Components
 import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
 import org.firstinspires.ftc.teamcode.keymap.Keymap
-import org.firstinspires.ftc.teamcode.subsystem.Arm
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
 import org.firstinspires.ftc.teamcode.subsystem.Effector
 import org.firstinspires.ftc.teamcode.subsystem.Lifts

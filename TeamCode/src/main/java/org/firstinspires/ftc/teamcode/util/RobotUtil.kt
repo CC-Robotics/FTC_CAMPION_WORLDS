@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.util
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 
-object Utils {
+object RobotUtil {
     /**
      * Create a MotorGroup from motor names of a leader and followers. This method is used instead
      * of the constructor override as the logic contains a known fatal bug.

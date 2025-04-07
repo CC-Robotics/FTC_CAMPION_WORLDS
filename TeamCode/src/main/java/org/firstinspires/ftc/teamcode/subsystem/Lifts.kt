@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.rowanmcalpin.nextftc.core.command.Command
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
@@ -12,7 +11,7 @@ import dev.nextftc.nextcontrol.filters.FilterElement
 import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
-import org.firstinspires.ftc.teamcode.util.Utils
+import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 /**
  * Controls the dual lift (linear slide) system of the robot running vertically in which the rack
@@ -74,7 +73,7 @@ object Lifts : SubsystemEx() {
         )
 
     override fun initialize() {
-        motors = Utils.motorGroupFromNames("lift1", "lift2")
+        motors = RobotUtil.motorGroupFromNames("lift1", "lift2")
     }
 
     override fun periodic() {
