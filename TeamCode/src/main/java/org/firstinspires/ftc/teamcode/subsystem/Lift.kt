@@ -2,16 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystem
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.clamp
-import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
-import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
+import dev.nextftc.nextcontrol.builder.controlSystem
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
-import dev.nextftc.nextcontrol.feedback.PIDElement
-import dev.nextftc.nextcontrol.feedback.PIDType
-import dev.nextftc.nextcontrol.filters.FilterElement
-import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
-import org.firstinspires.ftc.teamcode.archive.subsystem.Arm
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.util.RobotUtil
@@ -49,12 +43,10 @@ object Lift : SubsystemEx() {
      * PID Control system with a static feedforward term for that extra "push" to get it
      * moving quickly.
      */
-    val controlSystem = ControlSystem(
-        PIDElement(PIDType.POSITION, coefficients),
-        { kF + Pinion.motor.currentPosition * kPinion },
-        FilterElement(),
-        ConstantInterpolator(KineticState())
-    )
+    val controlSystem = controlSystem {
+        posPid(coefficients)
+        feedforward({ kF + Pinion.motor.currentPosition * kPinion })
+    }
 
     // Movement commands, which are also bound to the gamepad
 
