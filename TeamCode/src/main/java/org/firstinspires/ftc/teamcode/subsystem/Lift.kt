@@ -34,18 +34,14 @@ object Lift : SubsystemEx() {
     var kF = 0.0 // Feedforward term
 
     @JvmField
-    var kPinion = 0.0 // Multiplier of pinion position to add to the feedforward term
-
-    @JvmField
     var targetPosition = 0.0
 
     /**
-     * PID Control system with a static feedforward term for that extra "push" to get it
-     * moving quickly.
+     * PID Control system with a static feedforward term to counteract gravity
      */
     val controlSystem = controlSystem {
         posPid(coefficients)
-        feedforward({ kF + Pinion.motor.currentPosition * kPinion })
+        elevatorFF(kF)
     }
 
     // Movement commands, which are also bound to the gamepad

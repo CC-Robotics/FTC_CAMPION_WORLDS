@@ -40,7 +40,7 @@ object Lifts : SubsystemEx() {
      */
     val controlSystem = controlSystem {
         posPid(coefficients)
-        feedforward({ kF })
+        elevatorFF(kF)
     }
 
     // Movement commands, which are also bound to the gamepad

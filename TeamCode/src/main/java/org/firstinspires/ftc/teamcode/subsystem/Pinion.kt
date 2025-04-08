@@ -41,7 +41,7 @@ object Pinion : SubsystemEx() {
      */
     val controlSystem = controlSystem {
         posPid(coefficients)
-        feedforward({ kF })
+        basicFF(kS = kF)
     }
 
     private const val NAME = "pinion"
