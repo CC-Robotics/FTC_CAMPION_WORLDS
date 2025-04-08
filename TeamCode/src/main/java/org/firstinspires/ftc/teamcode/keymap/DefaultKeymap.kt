@@ -23,6 +23,9 @@ open class DefaultKeymap : Keymap {
     // Outdated arm control
     override val arm = Joystick({ 0f }, { 0f }, { true }, 0f, 0f)
 
+    // Lift control
+    override val lift = GamepadManager.gamepad2.leftStick
+
     // Pinion control
     override val pinion = GamepadManager.gamepad2.rightStick
 }

@@ -23,6 +23,7 @@ import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
+import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 /**
  * This implements a [Controller] to drive a [Controllable] to a specified target position. When it
@@ -39,5 +40,6 @@ class RunToPosition @JvmOverloads constructor(val target: Double, val controlSys
 
     override fun start() {
         controlSystem.goal = KineticState(target)
+        RobotUtil.telemetry.addData("a", "o")
     }
 }

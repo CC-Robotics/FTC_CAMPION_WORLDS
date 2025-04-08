@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.util
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 
@@ -11,4 +14,6 @@ object RobotUtil {
     fun motorGroupFromNames(leader: String, vararg followers: String): MotorGroup {
         return MotorGroup(MotorEx(leader), * Array(followers.size) { i -> MotorEx(followers[i]) })
     }
+
+    @JvmField val telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, OpModeData.telemetry)
 }

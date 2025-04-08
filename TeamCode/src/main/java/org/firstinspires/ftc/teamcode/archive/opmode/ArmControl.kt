@@ -7,7 +7,7 @@ import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import org.firstinspires.ftc.teamcode.archive.subsystem.Arm
 import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
 
-@TeleOp(name = "ArmControl", group = "Test Modes")
+// @TeleOp(name = "ArmControl", group = "Test Modes")
 class ArmControl : NextFTCOpMode() {
     override val components = Components()
         .useSubsystems(Arm)

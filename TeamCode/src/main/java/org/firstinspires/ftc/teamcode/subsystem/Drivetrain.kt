@@ -37,10 +37,15 @@ object Drivetrain : SubsystemEx() {
         backRightMotor = MotorEx(backRightName)
         frontRightMotor = MotorEx(frontRightName)
 
-        frontLeftMotor.direction = DcMotorSimple.Direction.REVERSE
+//        frontLeftMotor.direction = DcMotorSimple.Direction.REVERSE
+//        backLeftMotor.direction = DcMotorSimple.Direction.REVERSE
+//        // One side of wheels must have reversed motors
+//        frontRightMotor.direction = DcMotorSimple.Direction.FORWARD
+//        backRightMotor.direction = DcMotorSimple.Direction.FORWARD
+
+        frontLeftMotor.direction = DcMotorSimple.Direction.FORWARD
         backLeftMotor.direction = DcMotorSimple.Direction.REVERSE
-        // One side of wheels must have reversed motors
-        frontRightMotor.direction = DcMotorSimple.Direction.FORWARD
+        frontRightMotor.direction = DcMotorSimple.Direction.REVERSE
         backRightMotor.direction = DcMotorSimple.Direction.FORWARD
 
         motors = arrayOf(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor)

@@ -18,5 +18,6 @@ interface Keymap {
     val downWristPitch: Button
 
     val arm: Joystick
+    val lift: Joystick
     val pinion: Joystick
 }

@@ -37,8 +37,8 @@ class Drivetrain: NextFTCOpMode() {
 
         // Change your motor directions to suit your robot.
         frontLeftMotor.direction = DcMotorSimple.Direction.FORWARD
-        backLeftMotor.direction = DcMotorSimple.Direction.FORWARD
-        frontRightMotor.direction = DcMotorSimple.Direction.FORWARD
+        backLeftMotor.direction = DcMotorSimple.Direction.REVERSE
+        frontRightMotor.direction = DcMotorSimple.Direction.REVERSE
         backRightMotor.direction = DcMotorSimple.Direction.FORWARD
 
         motors = arrayOf(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor)
