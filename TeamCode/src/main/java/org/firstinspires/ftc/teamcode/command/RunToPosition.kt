@@ -36,7 +36,7 @@ class RunToPosition @JvmOverloads constructor(val target: Double, val controlSys
     constructor(target: Double, controlSystem: ControlSystem, subsystem: Subsystem): this(target, controlSystem, setOf(subsystem))
 
     override val isDone: Boolean
-        get() = controlSystem.isWithinTolerance(10.0)
+        get() = controlSystem.isWithinTolerance(KineticState(10.0))
 
     override fun start() {
         controlSystem.goal = KineticState(target)

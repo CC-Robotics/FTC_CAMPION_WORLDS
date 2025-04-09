@@ -19,8 +19,6 @@ class LiftControl : NextFTCOpMode() {
     }
 
     override fun onUpdate() {
-        telemetry.addData("Target Position", Lift.controlSystem.goal.position)
-        telemetry.addData("Current Position", Lift.motor.currentPosition)
         telemetry.update()
     }
 }

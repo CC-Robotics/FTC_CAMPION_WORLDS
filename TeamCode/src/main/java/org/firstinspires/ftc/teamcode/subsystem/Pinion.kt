@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.subsystem
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.clamp
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
-import dev.nextftc.nextcontrol.KineticState
 import dev.nextftc.nextcontrol.builder.controlSystem
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
+import dev.nextftc.nextcontrol.feedforward.BasicFeedforwardParameters
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.util.RobotUtil
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.RobotUtil
  */
 @Config
 object Pinion : SubsystemEx() {
-    lateinit var motor: MotorEx
+    private lateinit var motor: MotorEx
 
     /**
      * Boolean indicating if the control system should update the controllable
@@ -27,21 +27,24 @@ object Pinion : SubsystemEx() {
     var useControl = true
 
     @JvmField
-    var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.03, 0.0, 0.0)
 
     @JvmField
     var targetPosition = 0.0
 
     @JvmField
-    var kF = 0.0
+    var feedforwardParameters = BasicFeedforwardParameters()
+
+    @JvmField
+    var multiplier = 1.0
 
     /**
      * PID Control system with a static feedforward term for that extra "push" to get it
      * moving quickly.
      */
-    val controlSystem = controlSystem {
+    private val controlSystem = controlSystem {
         posPid(coefficients)
-        basicFF(kS = kF)
+        basicFF(feedforwardParameters)
     }
 
     private const val NAME = "pinion"
@@ -58,17 +61,11 @@ object Pinion : SubsystemEx() {
     override fun initialize() {
         targetPosition = 0.0
         motor = MotorEx(NAME)
+        motor.resetEncoder()
     }
 
     override fun periodic() {
-        if (useControl) {
-            motor.power =
-                controlSystem.calculate(KineticState(motor.currentPosition, motor.velocity))
-        }
-
-        RobotUtil.telemetry.addData("[Pinion] Target Position", targetPosition)
-        RobotUtil.telemetry.addData("[Pinion] Current Position", motor.currentPosition)
-        RobotUtil.telemetry.addData("[Pinion] Power", motor.power)
+        RobotUtil.handleControl("Pinion", useControl, motor, controlSystem, targetPosition)
     }
 
     private val runToPosition: RunToPosition
@@ -76,7 +73,7 @@ object Pinion : SubsystemEx() {
 
     override fun attach(keymap: Keymap) {
         keymap.pinion.heldCommand = { xy ->
-            targetPosition += xy.second
+            targetPosition += xy.second * multiplier
             targetPosition = clamp(targetPosition, 0.0, Double.POSITIVE_INFINITY)
             runToPosition
         }

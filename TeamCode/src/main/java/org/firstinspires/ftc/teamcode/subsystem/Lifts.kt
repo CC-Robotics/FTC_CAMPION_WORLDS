@@ -6,6 +6,7 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import dev.nextftc.nextcontrol.KineticState
 import dev.nextftc.nextcontrol.builder.controlSystem
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
+import dev.nextftc.nextcontrol.feedforward.GravityFeedforwardParameters
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.subsystem.Lift.targetPosition
@@ -32,15 +33,15 @@ object Lifts : SubsystemEx() {
     var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
 
     @JvmField
-    var kF = 0.0 // Feedforward term
+    var feedforwardParameters = GravityFeedforwardParameters() // Feedforward term
 
     /**
      * PID Control system with a static feedforward term for that extra "push" to get it
      * moving quickly.
      */
-    val controlSystem = controlSystem {
+    private val controlSystem = controlSystem {
         posPid(coefficients)
-        elevatorFF(kF)
+        elevatorFF(feedforwardParameters)
     }
 
     // Movement commands, which are also bound to the gamepad
@@ -68,6 +69,7 @@ object Lifts : SubsystemEx() {
 
     override fun initialize() {
         motors = RobotUtil.motorGroupFromNames("lift1", "lift2")
+        motors.leader.resetEncoder()
     }
 
     override fun periodic() {

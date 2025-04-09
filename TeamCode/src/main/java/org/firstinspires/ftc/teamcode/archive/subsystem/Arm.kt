@@ -8,13 +8,9 @@ import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
 import com.rowanmcalpin.nextftc.core.units.TimeSpan
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.command.RunToPosition
-import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
+import dev.nextftc.nextcontrol.builder.controlSystem
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
-import dev.nextftc.nextcontrol.feedback.PIDElement
-import dev.nextftc.nextcontrol.feedback.PIDType
-import dev.nextftc.nextcontrol.filters.FilterElement
-import dev.nextftc.nextcontrol.interpolators.ConstantInterpolator
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.subsystem.SubsystemEx
 import org.firstinspires.ftc.teamcode.util.RobotUtil
@@ -43,7 +39,7 @@ object Arm : SubsystemEx() {
      * percentage to calculate the correct feedforward term.
      * */
     @JvmField
-    var feedforwardMultiplier = 0.0005
+    var kF = 0.0005
 
     @JvmField
     var targetPosition = 0.0
@@ -73,12 +69,10 @@ object Arm : SubsystemEx() {
 //        FilterElement(),
 //        ConstantInterpolator(KineticState())
 //    )
-    var controlSystem = ControlSystem(
-        PIDElement(PIDType.POSITION, coefficients),
-        { _ -> feedforwardMultiplier },
-        FilterElement(),
-        ConstantInterpolator(KineticState())
-    )
+    var controlSystem = controlSystem {
+        posPid(coefficients)
+        armFF(kF)
+    }
 
     private val runToPosition: RunToPosition
         get() = RunToPosition(targetPosition, controlSystem, this)

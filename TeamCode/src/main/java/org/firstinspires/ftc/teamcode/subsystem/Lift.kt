@@ -6,6 +6,7 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import dev.nextftc.nextcontrol.KineticState
 import dev.nextftc.nextcontrol.builder.controlSystem
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
+import dev.nextftc.nextcontrol.feedforward.GravityFeedforwardParameters
 import org.firstinspires.ftc.teamcode.command.RunToPosition
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.util.RobotUtil
@@ -28,20 +29,23 @@ object Lift : SubsystemEx() {
     var useControl = true
 
     @JvmField
-    var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.03, 0.0, 0.0)
 
     @JvmField
-    var kF = 0.0 // Feedforward term
+    var feedforwardParameters = GravityFeedforwardParameters() // Feedforward term
 
     @JvmField
     var targetPosition = 0.0
 
+    @JvmField
+    var multiplier = 5.0
+
     /**
      * PID Control system with a static feedforward term to counteract gravity
      */
-    val controlSystem = controlSystem {
+    private val controlSystem = controlSystem {
         posPid(coefficients)
-        elevatorFF(kF)
+        elevatorFF(feedforwardParameters)
     }
 
     // Movement commands, which are also bound to the gamepad
@@ -73,23 +77,17 @@ object Lift : SubsystemEx() {
     override fun initialize() {
         targetPosition = 0.0
         motor = MotorEx("lift")
+        motor.resetEncoder()
     }
 
     override fun periodic() {
-        if (useControl) {
-            motor.power =
-                controlSystem.calculate(KineticState(motor.currentPosition, motor.velocity))
-        }
-
-        RobotUtil.telemetry.addData("[Lift] Target Position", targetPosition)
-        RobotUtil.telemetry.addData("[Lift] Current Position", motor.currentPosition)
-        RobotUtil.telemetry.addData("[Lift] Power", motor.power)
+        RobotUtil.handleControl("Lift", useControl, motor, controlSystem, targetPosition)
     }
 
     override fun attach(keymap: Keymap) {
         keymap.lift.heldCommand = { xy ->
-            targetPosition += xy.second
-            targetPosition = clamp(targetPosition, 0.0, Double.POSITIVE_INFINITY)
+            targetPosition += xy.second * multiplier
+            targetPosition = clamp(targetPosition, 0.0, 9030.0)
             runToPosition
         }
 //        keymap.highLift.pressedCommand = { toHigh }
