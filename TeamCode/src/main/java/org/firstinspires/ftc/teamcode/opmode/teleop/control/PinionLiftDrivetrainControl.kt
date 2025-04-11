@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.opmode.teleop.control
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -8,8 +8,10 @@ import kotlin.math.abs
 import kotlin.math.max
 
 @TeleOp(name = "Pinion + Lift + Drivetrain (Raw Power)", group = "Testing")
-class PinionLiftDrivetrainTest : LinearOpMode() {
-    lateinit var lift: DcMotor
+class PinionLiftDrivetrainControl : LinearOpMode() {
+    lateinit var liftLeft: DcMotor
+    lateinit var liftRight: DcMotor
+
     lateinit var pinion: DcMotor
 
     lateinit var fL: DcMotor
@@ -21,7 +23,19 @@ class PinionLiftDrivetrainTest : LinearOpMode() {
      * Describe this function...
      */
     override fun runOpMode() {
-        lift = hardwareMap.get(DcMotor::class.java, "lift")
+        fL = hardwareMap.get(DcMotor::class.java, "fL")
+        fR = hardwareMap.get(DcMotor::class.java, "fR")
+        bL = hardwareMap.get(DcMotor::class.java, "bL")
+        bR = hardwareMap.get(DcMotor::class.java, "bR")
+
+        fL.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        bL.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        fR.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        bR.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        liftLeft = hardwareMap.get(DcMotor::class.java, "lift_left")
+        liftRight = hardwareMap.get(DcMotor::class.java, "lift_right")
+
         pinion = hardwareMap.get(DcMotor::class.java, "pinion")
 
         fL.direction = DcMotorSimple.Direction.FORWARD
@@ -30,31 +44,36 @@ class PinionLiftDrivetrainTest : LinearOpMode() {
         bR.direction = DcMotorSimple.Direction.FORWARD
 
         pinion.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        lift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        liftLeft.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        liftRight.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
         pinion.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        lift.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        liftLeft.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        liftRight.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+
+        liftRight.direction = DcMotorSimple.Direction.REVERSE
 
         waitForStart()
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 // Lift and Pinion
-                lift.power = -gamepad2.right_stick_y.toDouble()
+                liftLeft.power = -gamepad2.right_stick_y.toDouble()
+                liftRight.power = -gamepad2.right_stick_y.toDouble()
                 pinion.power = -gamepad2.left_stick_y.toDouble()
 
                 updateDrivetrain()
 
                 telemetry.addData("pinion pos", pinion.currentPosition)
-                telemetry.addData("lift", lift.currentPosition)
-                telemetry.addData("right power", -gamepad2.right_stick_y)
-                telemetry.addData("left power", -gamepad2.left_stick_y)
+                telemetry.addData("lift", liftLeft.currentPosition)
+                telemetry.addData("lift power", -gamepad2.right_stick_y)
+                telemetry.addData("pinion power", -gamepad2.left_stick_y)
 
                 telemetry.update()
             }
         }
     }
 
-    fun updateDrivetrain() {
+    private fun updateDrivetrain() {
         val y = -gamepad1.left_stick_y.toDouble() // Remember, Y stick value is reversed
         val x = gamepad1.left_stick_x * 1.1 // Counteract imperfect strafing
         val rx = gamepad1.right_stick_x.toDouble()

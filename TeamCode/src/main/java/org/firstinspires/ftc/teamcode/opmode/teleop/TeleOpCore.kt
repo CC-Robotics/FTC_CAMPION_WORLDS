@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.opmode.teleop
 
 import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import com.rowanmcalpin.nextftc.ftc.components.Components
-import org.firstinspires.ftc.teamcode.archive.subsystem.Arm
 import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
 import org.firstinspires.ftc.teamcode.subsystem.Effector
 import org.firstinspires.ftc.teamcode.subsystem.Lift
-import org.firstinspires.ftc.teamcode.subsystem.Lifts
 import org.firstinspires.ftc.teamcode.subsystem.Pinion
 import org.firstinspires.ftc.teamcode.util.RobotUtil
 
@@ -41,6 +39,5 @@ abstract class TeleOpCore : NextFTCOpMode() {
         // Attach the keymap to all subsystems. (Binds them to the gamepad)
         for (subsystem in subsystems)
             subsystem.attach(keymap)
-        gamepad2.rumble(100)
     }
 }

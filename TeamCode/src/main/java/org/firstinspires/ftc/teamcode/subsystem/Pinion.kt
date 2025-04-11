@@ -27,16 +27,16 @@ object Pinion : SubsystemEx() {
     var useControl = true
 
     @JvmField
-    var coefficients = PIDCoefficients(0.03, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.02, 0.0, 0.0)
 
     @JvmField
     var targetPosition = 0.0
 
     @JvmField
-    var feedforwardParameters = BasicFeedforwardParameters()
+    var feedforwardParameters = BasicFeedforwardParameters(kS = 0.5)
 
     @JvmField
-    var multiplier = 1.0
+    var multiplier = 5.0
 
     /**
      * PID Control system with a static feedforward term for that extra "push" to get it
@@ -65,7 +65,15 @@ object Pinion : SubsystemEx() {
     }
 
     override fun periodic() {
-        RobotUtil.handleControl("Pinion", useControl, motor, controlSystem, targetPosition)
+        RobotUtil.handleControl(
+            "Pinion",
+            useControl,
+            motor,
+            controlSystem,
+            targetPosition,
+            runToPosition,
+            20.0
+        )
     }
 
     private val runToPosition: RunToPosition

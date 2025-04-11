@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.util
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.rowanmcalpin.nextftc.ftc.OpModeData
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
-import org.firstinspires.ftc.teamcode.subsystem.Lift.targetPosition
+import org.firstinspires.ftc.teamcode.command.RunToPosition
 
 object RobotUtil {
     /**
@@ -18,12 +19,19 @@ object RobotUtil {
         return MotorGroup(MotorEx(leader), * Array(followers.size) { i -> MotorEx(followers[i]) })
     }
 
-    fun handleControl(name: String, useControl: Boolean,  motor: MotorEx, controlSystem: ControlSystem, targetPosition: Double) {
+    fun handleControl(name: String, useControl: Boolean,  motor: Controllable, controlSystem: ControlSystem, targetPosition: Double, runToPosition: RunToPosition, deadzone: Double = 0.0) {
         if (useControl) {
-            motor.power =
+            if (deadzone != 0.0) {
+                if (controlSystem.isWithinTolerance(KineticState(deadzone))) {
+                    motor.power = 0.0
+                } else {
+                    motor.power =
+                        controlSystem.calculate(KineticState(motor.currentPosition, motor.velocity))
+                }
+            } else motor.power =
                 controlSystem.calculate(KineticState(motor.currentPosition, motor.velocity))
             if (targetPosition != controlSystem.goal.position) {
-
+                runToPosition()
             }
         } else {
             motor.power = 0.0

@@ -18,27 +18,32 @@ NextFTC: a user-friendly control library for FIRST Tech Challenge
 
 package org.firstinspires.ftc.teamcode.command
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
-import org.firstinspires.ftc.teamcode.util.RobotUtil
+import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
 
 /**
  * This implements a [Controller] to drive a [Controllable] to a specified target position. When it
  * finishes, it will set the [Controllable]'s power to 0. To have it hold position, set the default
- * command to a [HoldPosition] command.
+ * command to a [ActionCommand] command.
  */
-class RunToPosition @JvmOverloads constructor(val target: Double, val controlSystem: ControlSystem,
-                                              override val subsystems: Set<Subsystem> = setOf()): Command() {
+class ActionCommand(val action: Action, override val subsystems: Set<Subsystem> = setOf()): Command() {
+    override var isDone = false
 
-    constructor(target: Double, controlSystem: ControlSystem, subsystem: Subsystem): this(target, controlSystem, setOf(subsystem))
+    override fun update() {
+        val packet = TelemetryPacket()
+        action.preview(packet.fieldOverlay())
+        isDone = !action.run(packet)
+        FtcDashboard.getInstance().sendTelemetryPacket(packet)
+    }
 
-    override val isDone: Boolean
-        get() = controlSystem.isWithinTolerance(KineticState(10.0))
-
-    override fun start() {
-        controlSystem.goal = KineticState(target)
+    override fun stop(interrupted: Boolean) {
+        Drivetrain.brake()
     }
 }
