@@ -10,11 +10,13 @@ import org.firstinspires.ftc.teamcode.subsystem.LiftRaw
 @TeleOp(name = "Lift Control", group = "Testing")
 class LiftControl : NextFTCOpMode() {
     override val components = Components()
-        .useSubsystems(LiftRaw)
         .useGamepads()
+        .useSubsystems(LiftRaw)
         .useBulkReading()
 
     override fun onStartButtonPressed() {
+
+
         LiftRaw.attach(DefaultKeymap())
     }
 

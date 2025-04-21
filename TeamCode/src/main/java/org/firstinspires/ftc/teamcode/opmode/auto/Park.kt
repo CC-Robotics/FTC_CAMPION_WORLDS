@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto
 
 import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
@@ -15,8 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Pinion
 import org.firstinspires.ftc.teamcode.util.ActionCommandFactory
 
 
-@Autonomous(name = "Auto MkII", group = "Mark Series")
-class MarkAuto2 : NextFTCOpMode() {
+@Autonomous(name = "Park", group = "Regular Series")
+class Park : NextFTCOpMode() {
     override val components = Components()
         .useSubsystems(Drivetrain, Effector, Lift, Pinion)
         .useBulkReading()
@@ -34,21 +35,6 @@ class MarkAuto2 : NextFTCOpMode() {
 //        actionCommandFactory.createTrajectory {
 //            splineTo(Vector2d(60.02, -61.64), Math.toRadians(0.24))
 //        }()
-        SequentialGroup(
-            ActionCommand(drive.actionBuilder(drive.localizer.pose)
-                .strafeTo(Vector2d(48.0, -64.0))
-                .strafeTo(Vector2d(48.0, -8.0)) // Go around
-                .turnTo(Math.toRadians(0.0))
-                .strafeTo(Vector2d(56.0, -9.0)) // Align in front of specimen
-                .strafeTo(Vector2d(56.0, -62.69)) // Push it down
-                .strafeTo(Vector2d(53.0, -8.0)) // Go back up
-                .strafeTo(Vector2d(62.0, -8.0)) // Move to next one
-                .strafeTo(Vector2d(62.0, -62.69)) // Push it down
-                .strafeTo(Vector2d(59.52, -8.0)) // Go back up
-                .strafeTo(Vector2d(72.0, -8.0)) // Move to next one
-                .strafeTo(Vector2d(72.0, -62.69)) // Push it down
-                .build()),
-            // Lift.to(Lift.Position.TOP_RUNG.ticks + 200)
-        )()
+        actions.strafeTo(Vector2d(61.38, -62.69))()
     }
 }

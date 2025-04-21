@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util
+package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.ServoController
@@ -20,7 +20,10 @@ class DualServo(val leader: Servo, val follower: Servo) {
      * */
     var position: Double
         get() = leader.position
-        set(value) { leader.position = value }
+        set(value) {
+            leader.position = value
+            follower.position = value
+        }
 
     /**
      * Allows you to enable and disable PWM as well as get

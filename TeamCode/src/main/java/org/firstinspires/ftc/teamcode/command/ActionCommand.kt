@@ -27,19 +27,22 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
+import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 /**
  * This implements a [Controller] to drive a [Controllable] to a specified target position. When it
  * finishes, it will set the [Controllable]'s power to 0. To have it hold position, set the default
  * command to a [ActionCommand] command.
  */
-class ActionCommand(val action: Action, override val subsystems: Set<Subsystem> = setOf()): Command() {
+class ActionCommand(private val action: Action, override val subsystems: Set<Subsystem> = setOf()): Command() {
     override var isDone = false
 
     override fun update() {
         val packet = TelemetryPacket()
         action.preview(packet.fieldOverlay())
         isDone = !action.run(packet)
+        RobotUtil.telemetry.addLine(isDone.toString())
+        action.run {  }
         FtcDashboard.getInstance().sendTelemetryPacket(packet)
     }
 

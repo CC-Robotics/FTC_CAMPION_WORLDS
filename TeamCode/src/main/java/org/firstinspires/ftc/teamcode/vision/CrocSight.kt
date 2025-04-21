@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision
 
 import android.annotation.SuppressLint
+import com.rowanmcalpin.nextftc.ftc.OpModeData
 import org.opencv.calib3d.Calib3d
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -20,7 +21,7 @@ class CrocSight : OpenCvPipeline() {
     private val upperRed2 = Scalar(179.0, 255.0, 255.0)
 
     // Blue thresholds
-    private val lowerBlue = Scalar(105.0, 160.0, 20.0)
+    private val lowerBlue = Scalar(105.0, 120.0, 17.0)
     private val upperBlue = Scalar(130.0, 255.0, 255.0)
 
     // Yellow thresholds
@@ -29,7 +30,7 @@ class CrocSight : OpenCvPipeline() {
 
     // Fixed morphology parameters
     private val erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(3.5, 3.5))
-    private val dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(3.5, 3.5))
+    private val dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.5, 2.5))
     private val closeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(5.0, 5.0))
 
     // 640x480 Camera Matrix
@@ -65,7 +66,7 @@ class CrocSight : OpenCvPipeline() {
     data class AnalyzedContour(
         val rect: RotatedRect,
         val angle: Double,
-        val color: String,
+        val color: OpModeData.Alliance,
         val distance: Double,
         val normalizedCoords: Pair<Double, Double>,
         val sampleCoords: Pair<Double, Double>,
@@ -111,17 +112,19 @@ class CrocSight : OpenCvPipeline() {
             Point(10.0, 50.0),
             Imgproc.FONT_HERSHEY_SIMPLEX,
             0.5,
-            Scalar(255.0, 255.0, 255.0),
+            Scalar(255.0, 255.0,  255.0),
             1
         )
 
+        //Release Mats to prevent memory leaks
+        release()
         return outputMat
     }
 
     private fun morphMask(input: Mat, output: Mat) {
         // Apply morphological operations to clean up masks
-        Imgproc.erode(input, output, erodeElement, Point(-1.0, -1.0), 4)
-        Imgproc.dilate(output, output, dilateElement, Point(-1.0, -1.0), 2)
+        Imgproc.erode(input, output, erodeElement, Point(-1.0, -1.0), 2)
+        Imgproc.dilate(output, output, dilateElement, Point(-1.0, -1.0), 1)
         Imgproc.morphologyEx(output, output, Imgproc.MORPH_CLOSE, closeElement)
     }
 
@@ -133,7 +136,7 @@ class CrocSight : OpenCvPipeline() {
         // Dilate edges to connect nearby edges
         val dilationElement = Imgproc.getStructuringElement(
             Imgproc.MORPH_RECT,
-            Size(5.0, 5.0)
+            Size(2.0, 2.0)
         )
         Imgproc.dilate(edgesMat, dilatedEdges, dilationElement)
         dilationElement.release()
@@ -155,7 +158,7 @@ class CrocSight : OpenCvPipeline() {
             val area = Imgproc.contourArea(contour)
 
             // Skip tiny contours to reduce noise
-            if (area < 300) {
+            if (area < 4500) {
                 contour.release()
                 continue
             }
@@ -216,7 +219,7 @@ class CrocSight : OpenCvPipeline() {
                     AnalyzedContour(
                         rotatedRect,
                         angle,
-                        color,
+                        stringToAlliance(color),
                         distanceCm,
                         Pair(normalizedX, normalizedY),
                         Pair(sampleX, sampleY),
@@ -227,6 +230,14 @@ class CrocSight : OpenCvPipeline() {
 
             contour2f.release()
             contour.release()
+        }
+    }
+
+    private fun stringToAlliance(string: String): OpModeData.Alliance {
+        return when (string) {
+            "Red" -> OpModeData.Alliance.RED
+            "Blue" -> OpModeData.Alliance.BLUE
+            else -> OpModeData.Alliance.NONE
         }
     }
 
@@ -330,7 +341,7 @@ class CrocSight : OpenCvPipeline() {
         return analyzedContours
     }
 
-    fun release() {
+    private fun release() {
         // Release all Mats to prevent memory leaks
         hsvMat.release()
         redMask1.release()
@@ -343,7 +354,6 @@ class CrocSight : OpenCvPipeline() {
         morphedYellowMask.release()
         edgesMat.release()
         dilatedEdges.release()
-        outputMat.release()
         erodeElement.release()
         dilateElement.release()
         closeElement.release()

@@ -1,20 +1,23 @@
-package org.firstinspires.ftc.teamcode.subsystem
+package org.firstinspires.ftc.teamcode.subsystem.novaclaw
 
+import com.acmerobotics.roadrunner.SequentialAction
 import com.qualcomm.robotcore.hardware.PwmControl.PwmRange
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import com.rowanmcalpin.nextftc.core.command.Command
+import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import org.firstinspires.ftc.teamcode.keymap.Keymap
 import org.firstinspires.ftc.teamcode.hardware.DualServo
+import org.firstinspires.ftc.teamcode.subsystem.SubsystemEx
 import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 /**
  * The system controls the gripper of the bot which includes the claw servo, wrist yaw (left right) servos
  * and wrist pitch (up down) servos
  */
-object Effector : SubsystemEx() {
+object NovaEffector : SubsystemEx() {
     lateinit var claw: ServoImplEx
 
     private const val CLAW_NAME = "claw"
@@ -29,6 +32,12 @@ object Effector : SubsystemEx() {
 
         private const val WRIST_PITCH_LEFT_NAME = "axle1"
         private const val WRIST_PITCH_RIGHT_NAME = "axle2"
+
+        val flattenPitch: Command
+            get() = InstantCommand { pitch.position = 0.6178 }
+
+        val straightenPitch: Command
+            get() = InstantCommand { pitch.position = 0.2989 }
 
         fun initialize() {
             yaw = OpModeData.hardwareMap!!.get(Servo::class.java, WRIST_YAW_NAME)
@@ -47,7 +56,7 @@ object Effector : SubsystemEx() {
         fun initialize() {
             claw = OpModeData.hardwareMap!!.get(ServoImplEx::class.java, CLAW_NAME)
             claw.setPwmEnable()
-            claw.pwmRange = PwmRange(500.0, 2500.0)
+            // 0claw.pwmRange = PwmRange(500.0, 2500.0)
         }
 
         fun toggle() {
@@ -72,7 +81,7 @@ object Effector : SubsystemEx() {
         Claw.initialize()
 
         Wrist.yaw.position = 0.5
-        Wrist.pitch.position = 0.3183
+        Wrist.pitch.position = 0.2389
         Claw.close()
     }
 
@@ -89,6 +98,11 @@ object Effector : SubsystemEx() {
 
         keymap.downWristPitch.pressedCommand = { InstantCommand { Wrist.pitch.position += 0.01 }}
         keymap.downWristPitch.heldCommand = { InstantCommand { Wrist.pitch.position += 0.005 }}
+
+        keymap.flatPitch.pressedCommand = { Wrist.flattenPitch }
+        keymap.straightPitch.pressedCommand = { Wrist.straightenPitch }
+
+        keymap.quickAction.pressedCommand = { SequentialGroup(Claw.close, keymap.straightPitch.pressedCommand()) }
     }
 
     override fun periodic() {
@@ -98,7 +112,7 @@ object Effector : SubsystemEx() {
     }
 
     enum class ClawState(val position: Double) {
-        OPEN(0.4),
-        CLOSED(1.0)
+        OPEN(1.0),
+        CLOSED(0.0)
     }
 }

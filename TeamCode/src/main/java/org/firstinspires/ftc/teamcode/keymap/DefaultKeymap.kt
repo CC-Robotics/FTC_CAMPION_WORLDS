@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.keymap
 
+import com.rowanmcalpin.nextftc.ftc.gamepad.Button
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.gamepad.Joystick
 
@@ -28,4 +29,10 @@ open class DefaultKeymap : Keymap {
 
     // Pinion control
     override val pinion = GamepadManager.gamepad2.rightStick
+
+    override val flatPitch = GamepadManager.gamepad2.dpadRight
+    override val straightPitch = GamepadManager.gamepad2.dpadUp
+    override val resetIMU = GamepadManager.gamepad2.options
+    override val toggleYaw = GamepadManager.gamepad2.dpadLeft
+    override val quickAction = GamepadManager.gamepad2.dpadDown
 }

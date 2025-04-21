@@ -6,21 +6,22 @@ import com.rowanmcalpin.nextftc.ftc.components.Components
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import org.firstinspires.ftc.teamcode.keymap.DefaultKeymap
-import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
-import org.firstinspires.ftc.teamcode.subsystem.Effector
 import org.firstinspires.ftc.teamcode.subsystem.LiftRaw
 import org.firstinspires.ftc.teamcode.subsystem.PinionRaw
+import org.firstinspires.ftc.teamcode.subsystem.Vision
+import org.firstinspires.ftc.teamcode.subsystem.novaclaw.NovaDrivetrain
+import org.firstinspires.ftc.teamcode.subsystem.novaclaw.NovaEffector
 import org.firstinspires.ftc.teamcode.util.RobotGlobals
 import org.firstinspires.ftc.teamcode.util.RobotUtil
 
-@TeleOp(name = "Everything Control", group = "Testing")
-class EverythingControl : NextFTCOpMode() {
+@TeleOp(name = "Nova Control", group = "Testing")
+class NovaControl : NextFTCOpMode() {
     private lateinit var liftLeft: MotorEx
     private lateinit var liftRight: MotorEx
 
     private lateinit var lift: MotorGroup
 
-    private val subsystems = arrayOf(Effector, Drivetrain, PinionRaw, LiftRaw)
+    private val subsystems = arrayOf(NovaEffector, NovaDrivetrain, Vision, PinionRaw, LiftRaw)
 
     override val components = Components()
         .useGamepads()
@@ -62,9 +63,9 @@ class EverythingControl : NextFTCOpMode() {
         telemetry.addData("lift power", RobotGlobals.keymap.lift.y.toDouble())
         telemetry.addData("pinion power", RobotGlobals.keymap.pinion.y.toDouble())
 
-        telemetry.addData("claw pos", Effector.claw.position)
-        telemetry.addData("wrist yaw (twist) pos", Effector.Wrist.yaw.position)
-        telemetry.addData("wrist pitch (tilt) pos", Effector.Wrist.pitch.position)
+        telemetry.addData("claw pos", NovaEffector.claw.position)
+        telemetry.addData("wrist yaw (twist) pos", NovaEffector.Wrist.yaw.position)
+        telemetry.addData("wrist pitch (tilt) pos", NovaEffector.Wrist.pitch.position)
 
         telemetry.update()
     }

@@ -17,6 +17,12 @@ interface Keymap {
     val upWristPitch: Button
     val downWristPitch: Button
 
+    val straightPitch: Button
+    val flatPitch: Button
+    val resetIMU: Button
+    val toggleYaw: Button
+    val quickAction: Button
+
     val arm: Joystick
     val lift: Joystick
     val pinion: Joystick

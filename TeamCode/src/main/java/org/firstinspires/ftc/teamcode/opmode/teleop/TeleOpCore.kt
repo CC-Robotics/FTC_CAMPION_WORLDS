@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
 import org.firstinspires.ftc.teamcode.subsystem.Effector
 import org.firstinspires.ftc.teamcode.subsystem.Lift
 import org.firstinspires.ftc.teamcode.subsystem.Pinion
+import org.firstinspires.ftc.teamcode.util.RobotGlobals
 import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 /**
@@ -22,11 +23,10 @@ abstract class TeleOpCore : NextFTCOpMode() {
         .useSubsystems(*subsystems)
         // Bulk reading yields large performance gains caching all data from control hub.
         .useBulkReading()
-    private lateinit var keymap: Keymap
 
     override fun onInit() {
+        RobotGlobals.isStarted = false
         // Uses the default keymap (basically named keybinds)
-
     }
 
     override fun onUpdate() {
@@ -34,10 +34,11 @@ abstract class TeleOpCore : NextFTCOpMode() {
     }
 
     override fun onStartButtonPressed() {
-        keymap = DefaultKeymap()
+        RobotGlobals.isStarted = true
+        RobotGlobals.keymap = DefaultKeymap()
 
         // Attach the keymap to all subsystems. (Binds them to the gamepad)
         for (subsystem in subsystems)
-            subsystem.attach(keymap)
+            subsystem.attach(RobotGlobals.keymap)
     }
 }

@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystem
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.clamp
 import com.rowanmcalpin.nextftc.core.command.Command
+import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import dev.nextftc.nextcontrol.builder.controlSystem
 import dev.nextftc.nextcontrol.feedback.PIDCoefficients
@@ -29,10 +31,10 @@ object Lift : SubsystemEx() {
     var useControl = true
 
     @JvmField
-    var coefficients = PIDCoefficients(0.027, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.023, 0.0, 0.0)
 
     @JvmField
-    var feedforwardParameters = GravityFeedforwardParameters(0.001) // Feedforward term
+    var feedforwardParameters = GravityFeedforwardParameters(0.0) // Feedforward term
 
     @JvmField
     var targetPosition = 0.0
@@ -74,12 +76,19 @@ object Lift : SubsystemEx() {
 //            this
 //        )
 
-    private val runToPosition: RunToPosition
+    fun to(position: Double): SequentialGroup {
+        return SequentialGroup(
+            InstantCommand { targetPosition = position },
+            runToPosition
+        )
+    }
+
+    val runToPosition: RunToPosition
         get() = RunToPosition(targetPosition, controlSystem, this)
 
     override fun initialize() {
         targetPosition = 0.0
-        motors = MotorGroup("lift_right", "lift_left")
+        motors = RobotUtil.motorGroupFromNames("lift_right", "lift_left")
         motors.leader.reverse()
         motors.leader.resetEncoder()
     }
@@ -112,7 +121,8 @@ object Lift : SubsystemEx() {
             motors,
             controlSystem,
             targetPosition,
-            runToPosition
+            runToPosition,
+            3.0
         )
     }
 
@@ -123,7 +133,7 @@ object Lift : SubsystemEx() {
             } else {
                 xy.second * downwardMultiplier
             }
-            targetPosition = clamp(targetPosition, 0.0, 9030.0)
+            targetPosition = clamp(targetPosition, 0.0, 4600.0)
             runToPosition
         }
         keymap.highLift.pressedCommand = { toHigh }
@@ -132,5 +142,9 @@ object Lift : SubsystemEx() {
 //        keymap.highLift.pressedCommand = { toHigh }
 //        keymap.middleLift.pressedCommand = { toMiddle }
 //        keymap.lowLift.pressedCommand = { toLow }
+    }
+
+    enum class Position(val ticks: Double) {
+        TOP_RUNG(3800.0),
     }
 }

@@ -33,7 +33,7 @@ object Pinion : SubsystemEx() {
     var targetPosition = 0.0
 
     @JvmField
-    var feedforwardParameters = BasicFeedforwardParameters(kS = 0.5)
+    var feedforwardParameters = BasicFeedforwardParameters(kS = 0.0)
 
     @JvmField
     var multiplier = 5.0

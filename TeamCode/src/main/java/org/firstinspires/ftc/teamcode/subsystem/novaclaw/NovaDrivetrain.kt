@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystem
+package org.firstinspires.ftc.teamcode.subsystem.novaclaw
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection
@@ -6,18 +6,20 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.IMU
 import com.rowanmcalpin.nextftc.core.command.Command
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import org.firstinspires.ftc.teamcode.keymap.Keymap
+import org.firstinspires.ftc.teamcode.subsystem.SubsystemEx
 
 /**
  * The system controlling the drivetrain of the bot (the system facilitating
  * power delivery to the wheels.) It uses holonomic drive with mecanum
  * wheels allowing for the bot to move omnidirectionally without turning.
  * */
-object Drivetrain : SubsystemEx() {
+object NovaDrivetrain : SubsystemEx() {
     private const val FRONT_LEFT_NAME = "fL"
     private const val FRONT_RIGHT_NAME = "fR"
     private const val BACK_LEFT_NAME = "bL"
@@ -77,7 +79,8 @@ object Drivetrain : SubsystemEx() {
 
     override fun attach(keymap: Keymap) {
         // Use method which attaches mecanum drive control to the gamepad
-        driverControlled = MecanumDriverControlled(motors, GamepadManager.gamepad1)
+        driverControlled = MecanumDriverControlled(motors, GamepadManager.gamepad1, true, imu)
         driverControlled()
+        keymap.resetIMU.pressedCommand = { InstantCommand { imu.resetYaw() } }
     }
 }

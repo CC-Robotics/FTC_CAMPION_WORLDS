@@ -8,6 +8,7 @@ import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import com.rowanmcalpin.nextftc.ftc.components.Components
 import org.firstinspires.ftc.teamcode.MecanumDrive
 import org.firstinspires.ftc.teamcode.command.ActionCommand
+import org.firstinspires.ftc.teamcode.command.CommandGroups
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain
 import org.firstinspires.ftc.teamcode.subsystem.Effector
 import org.firstinspires.ftc.teamcode.subsystem.Lift
@@ -15,8 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Pinion
 import org.firstinspires.ftc.teamcode.util.ActionCommandFactory
 
 
-@Autonomous(name = "Auto MkII", group = "Mark Series")
-class MarkAuto2 : NextFTCOpMode() {
+@Autonomous(name = "Auto MkIII", group = "Mark Series")
+class MarkAuto3 : NextFTCOpMode() {
     override val components = Components()
         .useSubsystems(Drivetrain, Effector, Lift, Pinion)
         .useBulkReading()
@@ -35,19 +36,12 @@ class MarkAuto2 : NextFTCOpMode() {
 //            splineTo(Vector2d(60.02, -61.64), Math.toRadians(0.24))
 //        }()
         SequentialGroup(
-            ActionCommand(drive.actionBuilder(drive.localizer.pose)
-                .strafeTo(Vector2d(48.0, -64.0))
-                .strafeTo(Vector2d(48.0, -8.0)) // Go around
-                .turnTo(Math.toRadians(0.0))
-                .strafeTo(Vector2d(56.0, -9.0)) // Align in front of specimen
-                .strafeTo(Vector2d(56.0, -62.69)) // Push it down
-                .strafeTo(Vector2d(53.0, -8.0)) // Go back up
-                .strafeTo(Vector2d(62.0, -8.0)) // Move to next one
-                .strafeTo(Vector2d(62.0, -62.69)) // Push it down
-                .strafeTo(Vector2d(59.52, -8.0)) // Go back up
-                .strafeTo(Vector2d(72.0, -8.0)) // Move to next one
-                .strafeTo(Vector2d(72.0, -62.69)) // Push it down
-                .build()),
+            ActionCommand(
+                drive.actionBuilder(drive.localizer.pose)
+                    .splineTo(Vector2d(-0.21, -34.12), Math.toRadians(90.00))
+                    .build()
+            ),
+            CommandGroups.scoreSpecimen
             // Lift.to(Lift.Position.TOP_RUNG.ticks + 200)
         )()
     }

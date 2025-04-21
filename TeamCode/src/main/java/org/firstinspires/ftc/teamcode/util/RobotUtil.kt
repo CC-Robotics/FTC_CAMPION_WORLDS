@@ -9,6 +9,7 @@ import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup
 import dev.nextftc.nextcontrol.ControlSystem
 import dev.nextftc.nextcontrol.KineticState
 import org.firstinspires.ftc.teamcode.command.RunToPosition
+import org.firstinspires.ftc.teamcode.keymap.Keymap
 
 object RobotUtil {
     /**
@@ -18,6 +19,8 @@ object RobotUtil {
     fun motorGroupFromNames(leader: String, vararg followers: String): MotorGroup {
         return MotorGroup(MotorEx(leader), * Array(followers.size) { i -> MotorEx(followers[i]) })
     }
+
+    lateinit var keymap: Keymap
 
     fun handleControl(name: String, useControl: Boolean,  motor: Controllable, controlSystem: ControlSystem, targetPosition: Double, runToPosition: RunToPosition, deadzone: Double = 0.0) {
         if (useControl) {

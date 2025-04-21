@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.acmerobotics.dashboard.config.Config
-import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import org.firstinspires.ftc.teamcode.keymap.Keymap
+import org.firstinspires.ftc.teamcode.util.RobotGlobals
+import org.firstinspires.ftc.teamcode.util.RobotUtil
 
 /**
  * Controls the pinion component of the rack and pinion system of the robot which is mounted on the
@@ -12,18 +13,23 @@ import org.firstinspires.ftc.teamcode.keymap.Keymap
  */
 @Config
 object PinionRaw : SubsystemEx() {
-    private lateinit var motor: MotorEx
+    lateinit var motor: MotorEx
 
     private const val NAME = "pinion"
+
+    var started = false
 
     override fun initialize() {
         motor = MotorEx(NAME)
         motor.resetEncoder()
+        started = false
     }
 
     override fun attach(keymap: Keymap) {
-        keymap.pinion.heldCommand = { xy ->
-            InstantCommand { motor.power = xy.second.toDouble() }
-        }
+        started = true
+    }
+
+    override fun periodic() {
+        if (started) motor.power = RobotGlobals.keymap.pinion.y.toDouble()
     }
 }

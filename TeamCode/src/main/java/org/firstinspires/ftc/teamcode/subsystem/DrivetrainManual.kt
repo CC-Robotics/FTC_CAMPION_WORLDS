@@ -7,17 +7,19 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.IMU
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.ftc.OpModeData
-import com.rowanmcalpin.nextftc.ftc.driving.MecanumDriverControlled
 import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx
 import org.firstinspires.ftc.teamcode.keymap.Keymap
+import kotlin.math.abs
+import kotlin.math.max
+
 
 /**
  * The system controlling the drivetrain of the bot (the system facilitating
  * power delivery to the wheels.) It uses holonomic drive with mecanum
  * wheels allowing for the bot to move omnidirectionally without turning.
  * */
-object Drivetrain : SubsystemEx() {
+object DrivetrainManual : SubsystemEx() {
     private const val FRONT_LEFT_NAME = "fL"
     private const val FRONT_RIGHT_NAME = "fR"
     private const val BACK_LEFT_NAME = "bL"
@@ -33,6 +35,7 @@ object Drivetrain : SubsystemEx() {
     private lateinit var motors: Array<MotorEx>
 
     lateinit var driverControlled: Command
+    var started = false
 
     override fun initialize() {
         frontLeftMotor = MotorEx(FRONT_LEFT_NAME)
@@ -41,6 +44,7 @@ object Drivetrain : SubsystemEx() {
         frontRightMotor = MotorEx(FRONT_RIGHT_NAME)
 
         imu = OpModeData.hardwareMap!!.get(IMU::class.java, "imu")
+        started = false
 
         val logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP
         val usbDirection = UsbFacingDirection.LEFT
@@ -77,7 +81,29 @@ object Drivetrain : SubsystemEx() {
 
     override fun attach(keymap: Keymap) {
         // Use method which attaches mecanum drive control to the gamepad
-        driverControlled = MecanumDriverControlled(motors, GamepadManager.gamepad1)
-        driverControlled()
+        started = true
+    }
+
+    override fun periodic() {
+        if (!started) return
+
+        val y = GamepadManager.gamepad1.leftStick.y.toDouble() // Remember, Y stick value is reversed
+        val x = GamepadManager.gamepad1.leftStick.x * 1.1 // Counteract imperfect strafing
+        val rx = GamepadManager.gamepad1.rightStick.x.toDouble()
+
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        val denominator = max(abs(y) + abs(x) + abs(rx), 1.0)
+        val frontLeftPower = (y + x + rx) / denominator
+        val backLeftPower = (y - x + rx) / denominator
+        val frontRightPower = (y - x - rx) / denominator
+        val backRightPower = (y + x - rx) / denominator
+
+        frontLeftMotor.power = frontLeftPower
+        backLeftMotor.power = backLeftPower
+        frontRightMotor.power = frontRightPower
+        backRightMotor.power = backRightPower
     }
 }
